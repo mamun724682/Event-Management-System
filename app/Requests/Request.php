@@ -81,7 +81,8 @@ class Request
     }
 
     /**
-     * Handle validation errors
+     * @param array $errors
+     * @return void
      */
     protected function handleValidationErrors(array $errors)
     {
@@ -90,9 +91,26 @@ class Request
         } else {
             // Redirect back for web errors with session storage
             $_SESSION['errors'] = $errors;
+
             $referer = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
             header('Location: ' . $referer);
         }
         exit;
+    }
+
+    /**
+     * @return array
+     */
+    public static function errors(): array
+    {
+        $errors = $_SESSION['errors'] ?? [];
+        unset($_SESSION['errors']);
+
+        $errorData = [];
+        foreach ($errors as $field => $error) {
+            $errorData[$field] = join(', ', $error);
+        }
+
+        return $errorData;
     }
 }

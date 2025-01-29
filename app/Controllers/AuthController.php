@@ -21,13 +21,15 @@ class AuthController
         View::renderAndEcho('auth.login');
     }
 
-    public function login(Request $request)
+    public function login()
     {
-        $data = $request->validated([
-            'email' => 'required|email',
+        $request = new Request();
+        $data = $request->validate([
+            'email' => 'required',
             'password' => 'required|min:6'
         ]);
-        $request = new Request();
+        print_r($data);
+        die();
         $data = $request->validate([
             'name' => 'required|min:3|max:50',
             'description' => 'required|min:3|max:50',
