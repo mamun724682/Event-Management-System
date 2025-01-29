@@ -31,7 +31,9 @@ class Router
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $method = $_SERVER['REQUEST_METHOD'];
 
-        require_once __DIR__ . '/../routes/api.php'; // Include routes here.
+        // Include routes here.
+        require_once __DIR__ . '/../routes/web.php';
+        require_once __DIR__ . '/../routes/api.php';
 
         foreach (self::$routes[$method] ?? [] as $route => $callback) {
             // Convert route pattern to a regex (e.g., /events/{id} -> /events/([^/]+))
@@ -67,7 +69,6 @@ class Router
 
     private static function send404(): void
     {
-        http_response_code(404);
-        echo "Route Not Found";
+        throw new \Exception('Whoops! Route not found.', 404);
     }
 }

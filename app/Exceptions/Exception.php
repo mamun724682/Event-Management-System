@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Logger;
 use App\Response;
+use App\View;
 
 class Exception
 {
@@ -15,12 +16,11 @@ class Exception
             // Return JSON response for API
             Response::error('An unexpected error occurred.', 500);
         } else {
-            // Return HTML response for web requests
-            http_response_code(500);
-            echo '<h1>500 Internal Server Error</h1>';
-            echo '<p>An unexpected error occurred. Please try again later.</p>';
-            echo '<pre>' . $exception->getMessage() . '</pre>';
-            echo '<pre>' . $exception->getTraceAsString() . '</pre>';
+            View::renderAndEcho('errors.error', [
+                'code'    => $exception->getCode(),
+                'message' => $exception->getMessage(),
+                'trace'   => $exception->getTraceAsString()
+            ]);
         }
 
         exit;

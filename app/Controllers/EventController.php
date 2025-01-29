@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\Event;
 use App\Requests\Request;
 use App\Response;
+use App\View;
 
 class EventController
 {
@@ -13,6 +14,19 @@ class EventController
     public function __construct()
     {
         $this->model = new Event();
+    }
+
+    public function test()
+    {
+        View::renderAndEcho('auth.login', ['blogs' => [
+            [
+                'id' => 1,
+                'title' => 'test',
+            ],[
+                'id' => 2,
+                'title' => 'test 2',
+            ]
+        ]]);
     }
 
     public function index()

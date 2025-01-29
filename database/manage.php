@@ -10,6 +10,10 @@ switch ($command) {
         DatabaseManager::migrate();
         break;
 
+    case 'rollback':
+        DatabaseManager::deleteAll();
+        break;
+
     case 'seed':
         DatabaseManager::seed();
         break;

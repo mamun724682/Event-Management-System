@@ -1,2 +1,0 @@
-[2025-01-28 14:57:53] [error] Error fetching paginated data: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'ddd' in 'where clause' in D:\laragon\www\raw-php\app\Models\Model.php:90
-[2025-01-28 14:58:19] [error] Error fetching paginated data: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'ddd' in 'where clause' in D:\laragon\www\raw-php\app\Models\Model.php:90
