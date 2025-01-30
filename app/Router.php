@@ -55,7 +55,11 @@ class Router
         if (is_callable($callback)) {
             call_user_func_array($callback, $params);
         } elseif (is_array($callback)) {
-            [$controller, $method] = $callback;
+            $controller = $callback[0];
+            $method = $callback[1];
+
+            self::checkMiddleware($callback[2] ?? null);
+
             $instance = new $controller;
             if (method_exists($instance, $method)) {
                 call_user_func_array([$instance, $method], $params);
@@ -64,6 +68,17 @@ class Router
             }
         } else {
             self::send404();
+        }
+    }
+
+    private static function checkMiddleware(string $middleware = null)
+    {
+        if ($middleware) {
+            if ($middleware == 'auth'){
+                Auth::requireAuth();
+            } elseif ($middleware == 'guest') {
+                Auth::guestOnly();
+            }
         }
     }
 

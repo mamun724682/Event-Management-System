@@ -2,7 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\Event;
+use App\Auth;
+use App\Models\User;
 use App\Requests\Request;
 use App\Response;
 use App\View;
@@ -13,7 +14,7 @@ class AuthController
 
     public function __construct()
     {
-        $this->model = new Event();
+        $this->model = new User();
     }
 
     public function showLogin()
@@ -25,45 +26,41 @@ class AuthController
     {
         $request = new Request();
         $data = $request->validate([
-            'email' => 'required',
+            'email' => 'required|email',
             'password' => 'required|min:6'
         ]);
-        print_r($data);
-        die();
-        $data = $request->validate([
-            'name' => 'required|min:3|max:50',
-            'description' => 'required|min:3|max:50',
-        ]);
 
-        $user = (new User())->findByEmail($data['email']);
+        $user = $this->model->where('email', $data['email'])->first();
 
         if ($user && password_verify($data['password'], $user['password'])) {
-            $_SESSION['user'] = $user;
+            Auth::login($user);
             header('Location: /dashboard');
             exit();
         }
 
-        return view('auth/login', ['error' => 'Invalid credentials']);
+        Response::setFlashMessage('Invalid credentials. Please try again.', 'error');
+        header('Location: /');
     }
 
     public function showRegister()
     {
-        return view('auth/register');
+        View::renderAndEcho('auth.register');
     }
 
-    public function register(Request $request)
+    public function register()
     {
-        $data = $request->validated([
+        $request = new Request();
+        $data = $request->validate([
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed'
         ]);
 
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        $this->model->create($data);
 
-        (new User())->create($data);
-
-        return redirect('/login');
+        Response::setFlashMessage('Registration successful. Please login.');
+        header('Location: /');
     }
 
     public function logout()

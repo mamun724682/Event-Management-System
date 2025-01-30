@@ -64,6 +64,10 @@ class Request
                     if ($value && strlen($value) > $max) {
                         $errors[$field][] = "$field field must not exceed $max characters";
                     }
+                } elseif ($r === 'email') {
+                    if ($value && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                        $errors[$field][] = "$field field must must be an email";
+                    }
                 }
             }
 

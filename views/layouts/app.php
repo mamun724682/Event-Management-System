@@ -6,6 +6,7 @@
     <meta name="author" content="Abdullah Al Mamun <mamun167359@gmail.com>">
     <title>Event Management System</title>
 
+    <link rel="icon" type="image/x-icon" href="/assets/images/logo.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="/assets/dist/css/bootstrap.min.css" rel="stylesheet">
 

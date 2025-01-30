@@ -102,6 +102,20 @@ abstract class Model extends Database
         }
     }
 
+    public function first()
+    {
+        try {
+            $query = "SELECT * FROM {$this->table}" . $this->buildWhere();
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($this->bindings);
+
+            $this->resetQuery();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            throw new \Exception("Error fetching first data: " . $e->getMessage());
+        }
+    }
+
     public function create($data)
     {
         try {
