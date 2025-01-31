@@ -17,7 +17,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 <?= \App\Requests\Request::url() == '/events' ? 'text-dark' : '' ?>" href="/events">
+                    <a class="nav-link d-flex align-items-center gap-2 <?= str_contains(\App\Requests\Request::url(),'/events') ? 'text-dark' : '' ?>" href="/events">
                         <svg class="bi">
                             <use xlink:href="#puzzle"/>
                         </svg>

@@ -7,21 +7,20 @@
                 <h1 class="h3 mb-3 fw-normal">Please Sign Up</h1>
             </div>
 
-            <?php $errors = \App\Requests\Request::errors() ?>
             <div class="form-floating mb-1">
                 <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
                 <label for="name">Name</label>
-                <span class="text-danger"><?= $errors['name'] ?? null ?></span>
+                <span class="text-danger"><?= $validationErrors['name'] ?? null ?></span>
             </div>
             <div class="form-floating mb-1">
                 <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com">
                 <label for="email">Email address</label>
-                <span class="text-danger"><?= $errors['email'] ?? null ?></span>
+                <span class="text-danger"><?= $validationErrors['email'] ?? null ?></span>
             </div>
             <div class="form-floating mb-1">
                 <input type="password" name="password" class="form-control mb-0" id="password" placeholder="Password">
                 <label for="password">Password</label>
-                <span class="text-danger"><?= $errors['password'] ?? null ?></span>
+                <span class="text-danger"><?= $validationErrors['password'] ?? null ?></span>
             </div>
 
             <button class="btn btn-primary w-100 py-2 mt-2" type="submit">Sign Up</button>

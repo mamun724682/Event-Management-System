@@ -54,6 +54,8 @@ class Request
                     $errors[$field][] = "$field field is required";
                 } elseif ($r === 'numeric' && !is_numeric($value)) {
                     $errors[$field][] = "$field field must be a number";
+                } elseif ($r === 'integer' && !is_integer($value)) {
+                    $errors[$field][] = "$field field must be an integer";
                 } elseif (str_starts_with($r, 'min:')) {
                     $min = (int) explode(':', $r)[1];
                     if ($value && strlen($value) < $min) {

@@ -12,6 +12,8 @@ class View
         }
 
         // Extract data variables to be used in the view
+        $data['validationErrors'] = \App\Requests\Request::errors();
+        $data['flashMessage'] = \App\Response::getFlashMessage();
         extract($data);
 
         // Buffer the output to include the view file

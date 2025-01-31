@@ -21,3 +21,5 @@ Router::get('/logout', [AuthController::class, 'logout', 'auth']);
 
 // Events
 Router::get('/events', [EventController::class, 'index', 'auth']);
+Router::get('/events/create', [EventController::class, 'create', 'auth']);
+Router::post('/events/store', [EventController::class, 'store', 'auth']);

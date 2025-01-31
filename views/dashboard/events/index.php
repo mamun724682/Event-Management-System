@@ -12,15 +12,18 @@
                         <div class="btn-group me-2">
                             <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
                         </div>
-                        <button type="button"
+                        <a href="/events/create" type="button"
                                 class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
                             <svg class="bi">
                                 <use xlink:href="#plus-circle"/>
                             </svg>
                             Create
-                        </button>
+                        </a>
                     </div>
                 </div>
+
+                <?php include __DIR__ . '/../../layouts/partials/flashMessage.php'; ?>
+
                 <div class="table-responsive small">
                     <table class="table table-striped table-sm">
                         <thead>

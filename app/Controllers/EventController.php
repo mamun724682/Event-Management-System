@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Models\Event;
+use App\Models\User;
 use App\Requests\Request;
 use App\Response;
 use App\View;
@@ -25,34 +26,50 @@ class EventController
         ]);
     }
 
-    public function show($id)
+    public function create()
     {
-        $item = $this->model->find($id);
-        if (!$item) {
-            Response::error('Event not found', 404);
-        }
-        Response::success($item);
+        $users = (new User)->orderBy('desc')->get();
+        View::renderAndEcho('dashboard.events.create', [
+            'users' => $users
+        ]);
     }
 
     public function store()
     {
         $request = new Request();
         $data = $request->validate([
-            'name' => 'required|min:3|max:50',
-            'description' => 'required|min:3|max:50',
+            'name'        => 'required|min:3|max:50',
+            'location'    => 'required|min:3|max:50',
+            'capacity'    => 'required|min:1|numeric',
+            'description' => 'required',
+            'date'        => 'required|date',
         ]);
+        $data["user_id"] = Auth::id();
+        $data["slug"] = $this->generateSlug($data["name"]);
+        $data["created_at"] = (new \DateTime())->format("Y-m-d H:i:s");
+        $data["updated_at"] = (new \DateTime())->format("Y-m-d H:i:s");
         $event = $this->model->create($data);
-        Response::success($event, 'Event created successfully', 201);
+
+        Response::setFlashMessage('Event created successfully.');
+        header('Location: /events');
+    }
+
+    private function generateSlug($name): string
+    {
+        $slug = strtolower($name);
+        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+        $slug = preg_replace('/\s+/', '-', $slug);
+        return trim($slug, '-');
     }
 
     public function update($id)
     {
         $request = new Request();
         $data = $request->validate([
-            'name' => 'required|min:3|max:50',
+            'name'        => 'required|min:3|max:50',
             'description' => 'required|min:3|max:50',
         ]);
-        
+
         $updated = $this->model->update($data, $id);
         if (!$updated) {
             Response::error('Event not found or update failed', 400);
