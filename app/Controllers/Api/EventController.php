@@ -3,30 +3,30 @@
 namespace App\Controllers\Api;
 
 use App\Auth;
-use App\Models\Event;
-use App\Requests\Request;
+use App\Enums\EventFiltersEnum;
+use App\Requests\EventIndexRequest;
 use App\Response;
+use App\Services\EventService;
 
 class EventController
 {
-    private Event $model;
+    private EventService $service;
 
     public function __construct()
     {
-        $this->model = new Event();
+        $this->service = new EventService();
     }
 
     public function index()
     {
-        $request = new Request();
-        $data = $request->all();
+        $request = new EventIndexRequest();
+        $queryParameters = $request->validated();
+        $queryParameters[EventFiltersEnum::USER_ID->value] = Auth::id();
 
-        $events = $this->model->where('user_id', Auth::id())->orderBy('desc')->paginate(
-            perPage: $data['perPage'] ?? 10,
-            currentPage: $data['page'] ?? 1
-        );
+        print_r($this->service->getAll($queryParameters));
+        die();
         Response::success(
-            data: $events,
+            data: $this->service->getAll($queryParameters),
             message: 'Events retrieved successfully.'
         );
     }

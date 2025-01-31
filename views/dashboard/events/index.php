@@ -81,7 +81,7 @@
                         <button @click="prevPage" :disabled="page === 1" class="btn btn-primary">Previous</button>
                         <div>
                             <span>Page <span x-text="page"></span> of <span x-text="totalPages"></span></span>.
-                            <span>Total <span x-text="total"></span></span>
+                            <span>Total <span x-text="total"></span> items</span>
                         </div>
                         <button @click="nextPage" :disabled="page >= totalPages" class="btn btn-primary">Next</button>
                     </div>
