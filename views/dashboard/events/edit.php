@@ -15,37 +15,37 @@
                     </div>
                 </div>
 
-                <form action="/events/store" method="POST">
+                <form action="/events/<?= $event['id']?>/update" method="POST">
                     <!-- Name -->
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <input type="text" class="form-control" id="name" name="name" value="<?= $event['name']?>" required>
                         <span class="text-danger"><?= $validationErrors['name'] ?? null ?></span>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="location" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="location" name="location" required>
+                            <input type="text" class="form-control" id="location" name="location" required value="<?= $event['location']?>">
                             <span class="text-danger"><?= $validationErrors['location'] ?? null ?></span>
                         </div>
                         <div class="col-md-6">
                             <label for="capacity" class="form-label">Capacity</label>
-                            <input type="number" class="form-control" id="capacity" name="capacity" min="1" required>
+                            <input type="number" class="form-control" id="capacity" name="capacity" min="1" required value="<?= $event['capacity']?>">
                             <span class="text-danger"><?= $validationErrors['capacity'] ?? null ?></span>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
+                        <input type="date" class="form-control" id="date" name="date" required value="<?= $event['date']?>">
                         <span class="text-danger"><?= $validationErrors['date'] ?? null ?></span>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="4" required><?= $event['description']?></textarea>
                         <span class="text-danger"><?= $validationErrors['description'] ?? null ?></span>
                     </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\View;
 use Database\Database;
 use PDO;
 
@@ -102,6 +103,25 @@ abstract class Model extends Database
         }
     }
 
+    public function findOrFail($id)
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+            $stmt->execute([$id]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$data) {
+                View::renderAndEcho('errors.error', [
+                    'code'    => 404,
+                    'message' => "Data not found for id: " . $id,
+                    'trace'   => null
+                ]);
+            }
+            return $data;
+        } catch (\Exception $e) {
+            throw new \Exception("Error fetching data by id: " . $e->getMessage());
+        }
+    }
+
     public function first()
     {
         try {
@@ -138,10 +158,10 @@ abstract class Model extends Database
                 $this->where('id', $id);
             }
 
-            $setClause = implode(', ', array_map(fn ($key) => "$key = ?", array_keys($data)));
+            $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
             $query = "UPDATE {$this->table} SET $setClause" . $this->buildWhere();
             $stmt = $this->db->prepare($query);
-            $stmt->execute(array_merge(array_values($data), $this->bindings));
+            $stmt->execute(array_merge($data, $this->bindings));
 
             $this->resetQuery();
             return $this->find($stmt->rowCount());

@@ -28,10 +28,7 @@ class EventController
 
     public function create()
     {
-        $users = (new User)->orderBy('desc')->get();
-        View::renderAndEcho('dashboard.events.create', [
-            'users' => $users
-        ]);
+        View::renderAndEcho('dashboard.events.create');
     }
 
     public function store()
@@ -62,19 +59,32 @@ class EventController
         return trim($slug, '-');
     }
 
+    public function edit($id)
+    {
+        View::renderAndEcho('dashboard.events.edit', [
+            'event' => $this->model->findOrFail($id),
+        ]);
+    }
+
     public function update($id)
     {
         $request = new Request();
         $data = $request->validate([
             'name'        => 'required|min:3|max:50',
-            'description' => 'required|min:3|max:50',
+            'location'    => 'required|min:3|max:50',
+            'capacity'    => 'required|min:1|numeric',
+            'description' => 'required',
+            'date'        => 'required|date',
         ]);
+        $data["updated_at"] = (new \DateTime())->format("Y-m-d H:i:s");
 
-        $updated = $this->model->update($data, $id);
+        $event = $this->model->findOrFail($id);
+        $updated = $this->model->update($data, $event['id']);
         if (!$updated) {
-            Response::error('Event not found or update failed', 400);
+            Response::setFlashMessage('Event not found or update failed.');
         }
-        Response::success($updated, 'Event updated successfully');
+        Response::setFlashMessage('Event updated successfully.');
+        header('Location: /events');
     }
 
     public function destroy($id)

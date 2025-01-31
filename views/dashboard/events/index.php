@@ -30,9 +30,11 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Header</th>
-                            <th scope="col">Header</th>
-                            <th scope="col">Header</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Capacity</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -41,9 +43,13 @@
                             <tr>
                                 <td><?= $event['id'] ?></td>
                                 <td><?= htmlspecialchars($event['name']) ?></td>
-                                <td>data</td>
-                                <td>placeholder</td>
-                                <td>text</td>
+                                <td><?= htmlspecialchars($event['location']) ?></td>
+                                <td><?= $event['capacity'] ?></td>
+                                <td><?= $event['date'] ?></td>
+                                <td><?= $event['created_at'] ?></td>
+                                <td>
+                                    <a href="/events/<?= $event['id'] ?>/edit">Edit</a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
 
