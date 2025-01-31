@@ -49,6 +49,7 @@
                                 <td><?= $event['created_at'] ?></td>
                                 <td>
                                     <a href="/events/<?= $event['id'] ?>/edit">Edit</a>
+                                    <a href="/events/<?= $event['id'] ?>/delete" onclick="return confirm('Are you sure to delete?')">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

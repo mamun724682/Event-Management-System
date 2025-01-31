@@ -25,3 +25,4 @@ Router::get('/events/create', [EventController::class, 'create', 'auth']);
 Router::post('/events/store', [EventController::class, 'store', 'auth']);
 Router::get('/events/{id}/edit', [EventController::class, 'edit', 'auth']);
 Router::post('/events/{id}/update', [EventController::class, 'update', 'auth']);
+Router::get('/events/{id}/delete', [EventController::class, 'destroy', 'auth']);

@@ -89,10 +89,11 @@ class EventController
 
     public function destroy($id)
     {
-        $deleted = $this->model->delete($id);
+        $deleted = $this->model->where('user_id', Auth::id())->delete($id);
         if (!$deleted) {
-            Response::error('Event not found or deletion failed', 400);
+            Response::setFlashMessage('Event not found or deletion failed.');
         }
-        Response::success(null, 'Event deleted successfully');
+        Response::setFlashMessage('Event deleted successfully.');
+        header('Location: /events');
     }
 }
