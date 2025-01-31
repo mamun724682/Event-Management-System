@@ -10,6 +10,7 @@ abstract class Model extends Database
 {
     protected $table;
     protected $whereClauses = [];
+    protected $orWhereClauses = [];
     protected $bindings = [];
     protected $orderByClause = '';
 
@@ -20,10 +21,24 @@ abstract class Model extends Database
             $operator = '=';
         }
 
-        // Use unique named placeholders for each where clause
         $placeholder = ':' . str_replace('.', '_', $column) . '_' . count($this->whereClauses);
 
         $this->whereClauses[] = "$column $operator $placeholder";
+        $this->bindings[$placeholder] = $value;
+
+        return $this;
+    }
+
+    public function orWhere($column, $operator, $value = null)
+    {
+        if ($value === null) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $placeholder = ':' . str_replace('.', '_', $column) . '_' . count($this->orWhereClauses);
+
+        $this->orWhereClauses[] = "$column $operator $placeholder";
         $this->bindings[$placeholder] = $value;
 
         return $this;
@@ -44,10 +59,19 @@ abstract class Model extends Database
         return ' WHERE ' . implode(' AND ', $this->whereClauses);
     }
 
+    private function buildOrWhere()
+    {
+        if (empty($this->orWhereClauses)) {
+            return '';
+        }
+
+        return ' WHERE ' . implode(' OR ', $this->orWhereClauses);
+    }
+
     public function get()
     {
         try {
-            $query = "SELECT * FROM {$this->table}" . $this->buildWhere() . " {$this->orderByClause}";
+            $query = "SELECT * FROM {$this->table}" . $this->buildWhere() . $this->buildOrWhere() . " {$this->orderByClause}";
             $stmt = $this->db->prepare($query);
             $stmt->execute($this->bindings);
 
@@ -65,31 +89,42 @@ abstract class Model extends Database
         try {
             $offset = ($currentPage - 1) * $perPage;
 
-            // Build the WHERE clause and update bindings with named parameters
-            $whereClause = $this->buildWhere(true);
+            $whereClause = $this->buildWhere();
+            $orWhereClause = $this->buildOrWhere();
 
-            // Final SQL query
-            $query = "SELECT * FROM {$this->table} {$whereClause} {$this->orderByClause} LIMIT :limit OFFSET :offset";
+            // Query to get total count (without LIMIT/OFFSET)
+            $totalCount = $this->getTotalCount();
+
+            // Query to get paginated results
+            $query = "SELECT * FROM {$this->table} {$whereClause} {$orWhereClause} {$this->orderByClause} LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
-
-            // Bind WHERE parameters using named placeholders
             foreach ($this->bindings as $key => $value) {
-                $stmt->bindValue($key, $value); // $key already includes the colon prefix, e.g., ":status"
+                $stmt->bindValue($key, $value);
             }
-
-            // Bind LIMIT and OFFSET as integers
             $stmt->bindValue(':limit', (int)$perPage, \PDO::PARAM_INT);
             $stmt->bindValue(':offset', (int)$offset, \PDO::PARAM_INT);
-
-            // Execute the query
             $stmt->execute();
-
-            // Reset the state for subsequent queries
             $this->resetQuery();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            return [
+                "page"    => $currentPage,
+                "per_age" => $perPage,
+                "total"   => $totalCount,
+                "data"    => $stmt->fetchAll(\PDO::FETCH_ASSOC),
+            ];
         } catch (\Exception $e) {
             throw new \Exception("Error fetching paginated data: " . $e->getMessage());
         }
+    }
+
+    public function getTotalCount() {
+        $countQuery = "SELECT COUNT(*) as total FROM {$this->table} {$this->buildWhere()} {$this->buildOrWhere()}";
+        $countStmt = $this->db->prepare($countQuery);
+        foreach ($this->bindings as $key => $value) {
+            $countStmt->bindValue($key, $value);
+        }
+        $countStmt->execute();
+        return $countStmt->fetchColumn();
     }
 
     public function find($id)

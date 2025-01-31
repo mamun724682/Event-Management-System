@@ -26,6 +26,9 @@ class Router
         self::$routes['DELETE'][$uri] = $callback;
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function dispatch(): void
     {
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -47,9 +50,12 @@ class Router
             }
         }
 
-        self::send404();
+        self::sendError('Whoops! Route not found.');
     }
 
+    /**
+     * @throws \Exception
+     */
     private static function invoke($callback, $params = [])
     {
         if (is_callable($callback)) {
@@ -64,17 +70,17 @@ class Router
             if (method_exists($instance, $method)) {
                 call_user_func_array([$instance, $method], $params);
             } else {
-                self::send404();
+                self::sendError("{$controller} called undefined method '{$method}'.");
             }
         } else {
-            self::send404();
+            self::sendError();
         }
     }
 
     private static function checkMiddleware(string $middleware = null)
     {
         if ($middleware) {
-            if ($middleware == 'auth'){
+            if ($middleware == 'auth') {
                 Auth::requireAuth();
             } elseif ($middleware == 'guest') {
                 Auth::guestOnly();
@@ -82,8 +88,8 @@ class Router
         }
     }
 
-    private static function send404(): void
+    private static function sendError($message = 'Whoops! Something went wrong.'): void
     {
-        throw new \Exception('Whoops! Route not found.', 404);
+        throw new \Exception($message, 404);
     }
 }
