@@ -17,8 +17,6 @@ class DashboardController
 
     public function dashboard()
     {
-        echo Auth::user()['name'];
-        die();
-        View::renderAndEcho('auth.login');
+        View::renderAndEcho('dashboard.home');
     }
 }

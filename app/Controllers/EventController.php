@@ -16,26 +16,12 @@ class EventController
         $this->model = new Event();
     }
 
-    public function test()
-    {
-        View::renderAndEcho('auth.login', ['blogs' => [
-            [
-                'id' => 1,
-                'title' => 'test',
-            ],[
-                'id' => 2,
-                'title' => 'test 2',
-            ]
-        ]]);
-    }
-
     public function index()
     {
-        $items = $this->model->orderBy('desc')->paginate();
-        Response::success(
-            data: $items,
-            message: "Event data retrieve successfully."
-        );
+        $events = $this->model->orderBy('desc')->paginate();
+        View::renderAndEcho('dashboard.events.index', [
+            'events' => $events
+        ]);
     }
 
     public function show($id)

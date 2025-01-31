@@ -14,6 +14,11 @@ class Auth
         return $_SESSION['authUser'] ?? null;
     }
 
+    public static function id()
+    {
+        return self::user()['id'] ?? null;
+    }
+
     public static function login($user)
     {
         $_SESSION['authUser'] = $user;
