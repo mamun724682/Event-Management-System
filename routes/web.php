@@ -17,7 +17,7 @@ Router::post('/register', [AuthController::class, 'register', 'guest']);
  * Auth routes
  */
 Router::get('/dashboard', [DashboardController::class, 'dashboard', 'auth']);
-Router::post('/logout', [AuthController::class, 'logout', 'auth']);
+Router::get('/logout', [AuthController::class, 'logout', 'auth']);
 
 // Events
 Router::get('/events', [EventController::class, 'index', 'auth']);

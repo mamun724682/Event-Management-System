@@ -65,7 +65,7 @@ class AuthController
 
     public function logout()
     {
-        unset($_SESSION['user']);
-        return redirect('/login');
+        Auth::logout();
+        header('Location: /');
     }
 }

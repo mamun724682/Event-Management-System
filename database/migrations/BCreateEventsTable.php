@@ -19,6 +19,7 @@ class BCreateEventsTable extends Database
                 location VARCHAR(255),
                 capacity INT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
         ";
@@ -28,7 +29,9 @@ class BCreateEventsTable extends Database
 
     public function down()
     {
+        $this->db->exec("SET foreign_key_checks = 0;");
         $this->db->exec("DROP TABLE IF EXISTS events;");
+        $this->db->exec("SET foreign_key_checks = 1;");
         echo "Table `events` dropped successfully.\n";
     }
 }

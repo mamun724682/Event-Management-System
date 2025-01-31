@@ -24,7 +24,9 @@ class ACreateUsersTable extends Database
 
     public function down()
     {
+        $this->db->exec("SET foreign_key_checks = 0;");
         $this->db->exec("DROP TABLE IF EXISTS users;");
+        $this->db->exec("SET foreign_key_checks = 1;");
         echo "Table `users` dropped successfully.\n";
     }
 }

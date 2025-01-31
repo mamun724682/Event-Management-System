@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Auth;
 use App\Models\Event;
 use App\Requests\Request;
 use App\Response;
@@ -18,7 +19,7 @@ class EventController
 
     public function index()
     {
-        $events = $this->model->orderBy('desc')->paginate();
+        $events = $this->model->where('user_id', Auth::id())->orderBy('desc')->paginate();
         View::renderAndEcho('dashboard.events.index', [
             'events' => $events
         ]);

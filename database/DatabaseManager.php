@@ -2,6 +2,9 @@
 
 namespace Database;
 
+use Database\seeders\EventSeeder;
+use Database\seeders\UserSeeder;
+
 class DatabaseManager
 {
     public static function migrate()
@@ -18,8 +21,8 @@ class DatabaseManager
 
     public static function seed()
     {
-        $files = glob(__DIR__ . '/seeders/*.php');
-        self::getClass($files, 'run');
+        (new UserSeeder())->run();
+        (new EventSeeder())->run();
     }
 
     private static function getClass($files, $method)
