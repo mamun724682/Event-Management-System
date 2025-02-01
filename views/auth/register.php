@@ -1,12 +1,15 @@
 <?php ob_start(); ?>
 <div class="d-flex justify-content-center align-items-center vh-100">
     <main class="form-signin w-100 m-auto">
-        <form method="POST" action="/register">
-            <div class="text-center">
-                <img class="mb-4" src="/assets/images/logo.png" height="57">
-                <h1 class="h3 mb-3 fw-normal">Please Sign Up</h1>
-            </div>
 
+        <div class="text-center">
+            <img class="mb-4" src="/assets/images/logo.png" height="57">
+            <h1 class="h3 mb-3 fw-normal">Please Sign Up</h1>
+        </div>
+
+        <?php include __DIR__ . '/../layouts/partials/flashMessage.php'; ?>
+
+        <form method="POST" action="/register">
             <div class="form-floating mb-1">
                 <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
                 <label for="name">Name</label>
