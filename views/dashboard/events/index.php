@@ -72,6 +72,7 @@
                                     <td x-text="event.created_at"></td>
                                     <td>
                                         <a x-bind:href="'/events/'+event.slug+'/register'" target="_blank">View</a>
+                                        <a x-bind:href="'/events/'+event.id+'/export'">Export</a>
                                         <a x-bind:href="'/events/'+event.id+'/edit'">Edit</a>
                                         <a x-bind:href="'/events/'+event.id+'/delete'" onclick="return confirm('Are you sure to delete?')">Delete</a>
                                     </td>

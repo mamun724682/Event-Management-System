@@ -3,9 +3,11 @@
 namespace App\Controllers;
 
 use App\Auth;
+use App\Enums\AttendeeFiltersEnum;
 use App\Models\Event;
 use App\Requests\Request;
 use App\Response;
+use App\Services\AttendeeService;
 use App\View;
 
 class EventController
@@ -102,5 +104,41 @@ class EventController
         View::renderAndEcho('guest.event', [
             'event' => $event,
         ]);
+    }
+
+    public function export($id)
+    {
+        $event = $this->model->findOrFail($id);
+        $attendeeService = new AttendeeService();
+        $attendees = $attendeeService->getAll([
+            AttendeeFiltersEnum::EVENT_ID->value => $event['id'],
+            AttendeeFiltersEnum::USER_ID->value => Auth::id(),
+        ]);
+
+        $csvHeader = ["Event Name", "Attendee Name", "Email", "Phone", "Registered At"];
+        $csvData = [];
+        foreach ($attendees['data'] as $attendee) {
+            $csvData[] = [
+                $event['name'],
+                $attendee['name'],
+                $attendee['email'],
+                '="' . $attendee['phone'] . '"',
+                $attendee['created_at'],
+            ];
+        }
+
+        $filename = "event_attendees_" . date('Y-m-d') . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $file = fopen('php://output', 'w');
+        fputcsv($file, $csvHeader);
+
+        foreach ($csvData as $row) {
+            fputcsv($file, $row);
+        }
+
+        fclose($file);
+        exit;
     }
 }
