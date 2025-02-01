@@ -47,11 +47,54 @@ class EventService
     }
 
     /**
-     * @param array $event
+     * @param int $id
+     * @param int $userId
+     * @return mixed
+     * @throws Exception
+     */
+    public function findByIdAndUser(int $id, int $userId): mixed
+    {
+        return $this->eventRepository->find(
+            filters: [
+                EventFiltersEnum::ID->value      => $id,
+                EventFiltersEnum::USER_ID->value => $userId,
+            ]
+        );
+    }
+
+    /**
      * @param array $payload
      * @return mixed
      * @throws Exception
      */
+    public function create(array $payload): mixed
+    {
+        $processPayload = [
+            EventFieldsEnum::USER_ID->value         => $payload[EventFieldsEnum::USER_ID->value],
+            EventFieldsEnum::NAME->value            => $payload[EventFieldsEnum::NAME->value],
+            EventFieldsEnum::SLUG->value            => $this->generateSlug($payload[EventFieldsEnum::NAME->value]),
+            EventFieldsEnum::DATE->value            => $payload[EventFieldsEnum::DATE->value],
+            EventFieldsEnum::LOCATION->value        => $payload[EventFieldsEnum::LOCATION->value],
+            EventFieldsEnum::CAPACITY->value        => $payload[EventFieldsEnum::CAPACITY->value],
+            EventFieldsEnum::TOTAL_ATTENDEES->value => 0,
+            EventFieldsEnum::DESCRIPTION->value     => $payload[EventFieldsEnum::DESCRIPTION->value],
+            EventFieldsEnum::CREATED_AT->value      => (new \DateTime())->format("Y-m-d H:i:s"),
+            EventFieldsEnum::UPDATED_AT->value      => (new \DateTime())->format("Y-m-d H:i:s"),
+        ];
+
+        return $this->eventRepository->create(
+            payload: $processPayload
+        );
+    }
+
+    private function generateSlug($name): string
+    {
+        $slug = strtolower($name);
+        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+        $slug = preg_replace('/\s+/', '-', $slug);
+        return trim($slug, '-');
+    }
+
     public function update(array $event, array $payload): mixed
     {
         $processPayload = [
@@ -68,5 +111,49 @@ class EventService
             id: $event['id'],
             changes: $processPayload
         );
+    }
+
+    /**
+     * @param array $event
+     * @return void
+     * @throws Exception
+     */
+    public function delete(array $event)
+    {
+        $this->eventRepository->delete(id: $event['id']);
+    }
+
+    /**
+     * @param array $event
+     * @param array $attendees
+     * @return void
+     */
+    public function export(array $event, array $attendees)
+    {
+        $csvHeader = ["Event Name", "Attendee Name", "Email", "Phone", "Registered At"];
+        $csvData = [];
+        foreach ($attendees['data'] as $attendee) {
+            $csvData[] = [
+                $event['name'],
+                $attendee['name'],
+                $attendee['email'],
+                '="' . $attendee['phone'] . '"',
+                $attendee['created_at'],
+            ];
+        }
+
+        $filename = "event_attendees_" . date('Y-m-d') . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $file = fopen('php://output', 'w');
+        fputcsv($file, $csvHeader);
+
+        foreach ($csvData as $row) {
+            fputcsv($file, $row);
+        }
+
+        fclose($file);
+        exit;
     }
 }

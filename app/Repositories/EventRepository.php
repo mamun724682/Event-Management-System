@@ -54,6 +54,18 @@ class EventRepository
     }
 
     /**
+     * @param array $payload
+     * @return mixed
+     * @throws Exception
+     */
+    public function create(array $payload): mixed
+    {
+        return $this->model->create(
+            data: $payload,
+        );
+    }
+
+    /**
      * @param int $id
      * @param array $changes
      * @return mixed
@@ -65,6 +77,16 @@ class EventRepository
             data: $changes,
             id: $id
         );
+    }
+
+    /**
+     * @param $id
+     * @return void
+     * @throws Exception
+     */
+    public function delete($id)
+    {
+        $this->model->delete($id);
     }
 
     /**

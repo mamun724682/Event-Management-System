@@ -3,24 +3,12 @@
 namespace App\Controllers;
 
 use App\Auth;
-use App\Enums\AttendeeFiltersEnum;
 use App\Enums\EventFiltersEnum;
-use App\Models\Event;
-use App\Requests\Request;
-use App\Response;
-use App\Services\AttendeeService;
 use App\Services\EventService;
 use App\View;
 
 class AttendeeController
 {
-    private AttendeeService $attendeeService;
-
-    public function __construct()
-    {
-        $this->attendeeService = new AttendeeService();
-    }
-
     public function index()
     {
         $eventService = new EventService();

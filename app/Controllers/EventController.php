@@ -4,27 +4,26 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Enums\AttendeeFiltersEnum;
-use App\Models\Event;
-use App\Requests\Request;
+use App\Enums\EventFieldsEnum;
+use App\Requests\EventStoreRequest;
+use App\Requests\EventUpdateRequest;
 use App\Response;
 use App\Services\AttendeeService;
+use App\Services\EventService;
 use App\View;
 
 class EventController
 {
-    private $model;
+    private EventService $eventService;
 
     public function __construct()
     {
-        $this->model = new Event();
+        $this->eventService = new EventService();
     }
 
     public function index()
     {
-        $events = $this->model->where('user_id', Auth::id())->orderBy('desc')->paginate();
-        View::renderAndEcho('dashboard.events.index', [
-            'events' => $events
-        ]);
+        View::renderAndEcho('dashboard.events.index');
     }
 
     public function create()
@@ -34,73 +33,100 @@ class EventController
 
     public function store()
     {
-        $request = new Request();
-        $data = $request->validate([
-            'name'        => 'required|min:3|max:50',
-            'location'    => 'required|min:3|max:50',
-            'capacity'    => 'required|min:1|numeric',
-            'description' => 'required',
-            'date'        => 'required|date',
-        ]);
-        $data["user_id"] = Auth::id();
-        $data["slug"] = $this->generateSlug($data["name"]);
-        $data["created_at"] = (new \DateTime())->format("Y-m-d H:i:s");
-        $data["updated_at"] = (new \DateTime())->format("Y-m-d H:i:s");
-        $event = $this->model->create($data);
+        $request = new EventStoreRequest();
+        $data = $request->validated();
+        $data[EventFieldsEnum::USER_ID->value] = Auth::id();
+        $this->eventService->create($data);
 
         Response::setFlashMessage('Event created successfully.');
         header('Location: /events');
     }
 
-    private function generateSlug($name): string
-    {
-        $slug = strtolower($name);
-        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
-        $slug = preg_replace('/\s+/', '-', $slug);
-        return trim($slug, '-');
-    }
-
     public function edit($id)
     {
+        $event = $this->eventService->findByIdAndUser(
+            id: $id,
+            userId: Auth::id()
+        );
+        if (!$event) {
+            View::renderAndEcho('errors.error', [
+                'code'    => 404,
+                'message' => "Event not found for id: " . $id,
+                'trace'   => null
+            ]);
+            exit();
+        }
+
         View::renderAndEcho('dashboard.events.edit', [
-            'event' => $this->model->findOrFail($id),
+            'event' => $event,
         ]);
     }
 
     public function update($id)
     {
-        $request = new Request();
-        $data = $request->validate([
-            'name'        => 'required|min:3|max:50',
-            'location'    => 'required|min:3|max:50',
-            'capacity'    => 'required|min:1|numeric',
-            'description' => 'required',
-            'date'        => 'required|date',
-        ]);
-        $data["updated_at"] = (new \DateTime())->format("Y-m-d H:i:s");
+        $request = new EventUpdateRequest();
+        $data = $request->validated();
 
-        $event = $this->model->findOrFail($id);
-        $updated = $this->model->update($data, $event['id']);
-        if (!$updated) {
-            Response::setFlashMessage('Event not found or update failed.');
+        $event = $this->eventService->findByIdAndUser(
+            id: $id,
+            userId: Auth::id()
+        );
+        if (!$event) {
+            View::renderAndEcho('errors.error', [
+                'code'    => 404,
+                'message' => "Event not found for id: " . $id,
+                'trace'   => null
+            ]);
+            exit();
         }
+
+        $updated = $this->eventService->update(
+            event: $event,
+            payload: $data
+        );
+        if (!$updated) {
+            Response::setFlashMessage('Event not found or update failed.', 'error');
+        }
+
         Response::setFlashMessage('Event updated successfully.');
         header('Location: /events');
     }
 
     public function destroy($id)
     {
-        $deleted = $this->model->where('user_id', Auth::id())->delete($id);
-        if (!$deleted) {
-            Response::setFlashMessage('Event not found or deletion failed.');
+        $event = $this->eventService->findByIdAndUser(
+            id: $id,
+            userId: Auth::id()
+        );
+        if (!$event) {
+            View::renderAndEcho('errors.error', [
+                'code'    => 404,
+                'message' => "Event not found for id: " . $id,
+                'trace'   => null
+            ]);
+            exit();
         }
+
+        $this->eventService->delete($event);
+
         Response::setFlashMessage('Event deleted successfully.');
         header('Location: /events');
     }
 
     public function showRegister(string $slug)
     {
-        $event = $this->model->where('slug', $slug)->firstOrFail();
+        $event = $this->eventService->findBySlug(
+            slug: $slug,
+        );
+        if (!$event) {
+            View::renderAndEcho('errors.error', [
+                'code'    => 404,
+                'message' => "Corresponding event not found!",
+                'trace'   => null
+            ]);
+            exit();
+        }
+
         View::renderAndEcho('guest.event', [
             'event' => $event,
         ]);
@@ -108,37 +134,29 @@ class EventController
 
     public function export($id)
     {
-        $event = $this->model->findOrFail($id);
+        $event = $this->eventService->findByIdAndUser(
+            id: $id,
+            userId: Auth::id()
+        );
+        if (!$event) {
+            View::renderAndEcho('errors.error', [
+                'code'    => 404,
+                'message' => "Event not found for id: " . $id,
+                'trace'   => null
+            ]);
+            exit();
+        }
+
         $attendeeService = new AttendeeService();
         $attendees = $attendeeService->getAll([
+            "perPage" => 5000,
             AttendeeFiltersEnum::EVENT_ID->value => $event['id'],
-            AttendeeFiltersEnum::USER_ID->value => Auth::id(),
+            AttendeeFiltersEnum::USER_ID->value  => Auth::id(),
         ]);
 
-        $csvHeader = ["Event Name", "Attendee Name", "Email", "Phone", "Registered At"];
-        $csvData = [];
-        foreach ($attendees['data'] as $attendee) {
-            $csvData[] = [
-                $event['name'],
-                $attendee['name'],
-                $attendee['email'],
-                '="' . $attendee['phone'] . '"',
-                $attendee['created_at'],
-            ];
-        }
-
-        $filename = "event_attendees_" . date('Y-m-d') . ".csv";
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-
-        $file = fopen('php://output', 'w');
-        fputcsv($file, $csvHeader);
-
-        foreach ($csvData as $row) {
-            fputcsv($file, $row);
-        }
-
-        fclose($file);
-        exit;
+        $this->eventService->export(
+            event: $event,
+            attendees: $attendees
+        );
     }
 }
