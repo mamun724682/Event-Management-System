@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\AttendeeController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\EventController;
@@ -29,3 +30,6 @@ Router::post('/events/store', [EventController::class, 'store', 'auth']);
 Router::get('/events/{id}/edit', [EventController::class, 'edit', 'auth']);
 Router::post('/events/{id}/update', [EventController::class, 'update', 'auth']);
 Router::get('/events/{id}/delete', [EventController::class, 'destroy', 'auth']);
+
+// Attendees
+Router::get('/attendees', [AttendeeController::class, 'index', 'auth']);

@@ -18,7 +18,7 @@ class EventSeeder extends Database
                 "slug"        => "event-$item",
                 "location"    => "Dhaka",
                 "capacity"    => $c = rand(100, 500),
-                "total_attendees" => $c - rand(0, 50),
+                "total_attendees" => $c - rand(0, 99),
                 "description" => "Description for Event $item",
                 "date"        => (new \DateTime())->format("Y-m-d"),
                 "created_at"  => (new \DateTime())->format("Y-m-d H:i:s"),

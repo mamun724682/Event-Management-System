@@ -13,6 +13,7 @@ class AttendeeSeeder extends Database
 
         foreach (range(1, 100) as $item) {
             (new Attendee)->create([
+                "user_id"    => rand(1, 100),
                 "event_id"   => rand(1, 100),
                 "name"       => "Attendee $item",
                 "email"      => "attendee{$item}@app.com",

@@ -42,6 +42,7 @@ class AttendeeService
     public function create(array $event, array $payload)
     {
         $attendees = $this->getAll([
+            AttendeeFiltersEnum::USER_ID->value  => $event[EventFieldsEnum::USER_ID->value],
             AttendeeFiltersEnum::EVENT_ID->value => $event[EventFieldsEnum::ID->value],
         ]);
 
@@ -52,9 +53,10 @@ class AttendeeService
 
         // Check already registered
         $attendees = $this->getAll([
+            AttendeeFiltersEnum::USER_ID->value  => $event[EventFieldsEnum::USER_ID->value],
             AttendeeFiltersEnum::EVENT_ID->value => $event[EventFieldsEnum::ID->value],
-            AttendeeFiltersEnum::EMAIL->value => $payload[AttendeeFieldsEnum::EMAIL->value],
-            AttendeeFiltersEnum::PHONE->value => $payload[AttendeeFieldsEnum::PHONE->value],
+            AttendeeFiltersEnum::EMAIL->value    => $payload[AttendeeFieldsEnum::EMAIL->value],
+            AttendeeFiltersEnum::PHONE->value    => $payload[AttendeeFieldsEnum::PHONE->value],
         ]);
         if ($attendees['total'] > 0) {
             throw new AttendeeCreateException("You have already registered to this event!");
@@ -62,6 +64,7 @@ class AttendeeService
 
         $processPayload = [
             AttendeeFieldsEnum::EVENT_ID->value   => $event['id'],
+            AttendeeFieldsEnum::USER_ID->value    => $event[EventFieldsEnum::USER_ID->value],
             AttendeeFieldsEnum::NAME->value       => $payload[AttendeeFieldsEnum::NAME->value],
             AttendeeFieldsEnum::EMAIL->value      => $payload[AttendeeFieldsEnum::EMAIL->value],
             AttendeeFieldsEnum::PHONE->value      => $payload[AttendeeFieldsEnum::PHONE->value],

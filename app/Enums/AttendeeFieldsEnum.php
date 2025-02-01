@@ -5,6 +5,7 @@ namespace App\Enums;
 enum AttendeeFieldsEnum: string
 {
     case ID         = "id";
+    case USER_ID    = "user_id";
     case EVENT_ID   = "event_id";
     case NAME       = "name";
     case EMAIL      = "email";

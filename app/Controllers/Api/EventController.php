@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Auth;
+use App\Enums\AttendeeFieldsEnum;
 use App\Enums\EventFiltersEnum;
 use App\Exceptions\AttendeeCreateException;
 use App\Requests\EventIndexRequest;
@@ -36,7 +37,7 @@ class EventController
     {
         $request = new Request();
         $data = $request->validate([
-            'name' => 'required|min:3|max:50',
+            'name'  => 'required|min:3|max:50',
             'email' => 'required|min:3|max:50',
             'phone' => 'required|min:3|max:50',
         ]);
@@ -45,7 +46,10 @@ class EventController
 
         try {
             Response::success(
-                data: $attendeeService->create($event, $data),
+                data: $attendeeService->create(
+                    event: $event,
+                    payload: $data
+                ),
                 message: 'Event registration successful.'
             );
         } catch (AttendeeCreateException $e) {

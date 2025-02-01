@@ -72,6 +72,9 @@ class AttendeeRepository
         if (isset($filters[AttendeeFiltersEnum::ID->value])) {
             $model->where(AttendeeFieldsEnum::ID->value, $filters[AttendeeFiltersEnum::ID->value]);
         }
+        if (isset($filters[AttendeeFiltersEnum::USER_ID->value])) {
+            $model->where(AttendeeFieldsEnum::USER_ID->value, $filters[AttendeeFiltersEnum::USER_ID->value]);
+        }
         if (isset($filters[AttendeeFiltersEnum::EVENT_ID->value])) {
             $model->where(AttendeeFieldsEnum::EVENT_ID->value, $filters[AttendeeFiltersEnum::EVENT_ID->value]);
         }
