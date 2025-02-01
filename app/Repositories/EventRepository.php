@@ -6,6 +6,7 @@ use App\Enums\EventFieldsEnum;
 use App\Enums\EventFiltersEnum;
 use App\Enums\SortOrderEnum;
 use App\Models\Event;
+use Exception;
 
 class EventRepository
 {
@@ -23,7 +24,7 @@ class EventRepository
      * @param string $sortBy
      * @param string $sortOrder
      * @return array|int[]
-     * @throws \Exception
+     * @throws Exception
      */
     public function getAll(
         int    $page,
@@ -32,6 +33,45 @@ class EventRepository
         string $sortBy = EventFieldsEnum::ID->value,
         string $sortOrder = SortOrderEnum::ASC->value
     ): array
+    {
+        return $this->getQuery($filters)->orderBy(
+            direction: $sortOrder,
+            column: $sortBy
+        )->paginate(
+            perPage: $perPage,
+            currentPage: $page
+        );
+    }
+
+    /**
+     * @param array $filters
+     * @return mixed
+     * @throws Exception
+     */
+    public function find(array $filters = []): mixed
+    {
+        return $this->getQuery($filters)->first();
+    }
+
+    /**
+     * @param int $id
+     * @param array $changes
+     * @return mixed
+     * @throws Exception
+     */
+    public function update(int $id, array $changes): mixed
+    {
+        return $this->model->update(
+            data: $changes,
+            id: $id
+        );
+    }
+
+    /**
+     * @param array $filters
+     * @return Event
+     */
+    private function getQuery(array $filters = []): Event
     {
         $model = $this->model;
 
@@ -60,12 +100,6 @@ class EventRepository
             $model->where(EventFieldsEnum::DESCRIPTION->value, 'like', "%{$filters[EventFiltersEnum::DESCRIPTION->value]}%");
         }
 
-        return $model->orderBy(
-            direction: $sortOrder,
-            column: $sortBy
-        )->paginate(
-            perPage: $perPage,
-            currentPage: $page
-        );
+        return $model;
     }
 }

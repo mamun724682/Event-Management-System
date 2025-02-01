@@ -93,7 +93,7 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                // 'Accept': 'application/json',
+                                'Accept': 'application/json',
                             },
                             body: JSON.stringify({
                                 name: this.name,
@@ -105,10 +105,10 @@
                         const result = await response.json();
 
                         if (response.ok) {
-                            this.successMessage = "Form submitted successfully!";
+                            this.successMessage = result?.message;
                             this.name = this.email = this.phone = ''; // Reset fields
                         } else {
-                            this.errors = result.errors || {};
+                            this.errors.email = result?.message || 'Something went wrong!';
                         }
                     } catch (error) {
                         console.error("Error submitting form:", error);
