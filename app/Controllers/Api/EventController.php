@@ -3,7 +3,6 @@
 namespace App\Controllers\Api;
 
 use App\Auth;
-use App\Enums\AttendeeFieldsEnum;
 use App\Enums\EventFiltersEnum;
 use App\Exceptions\AttendeeCreateException;
 use App\Requests\EventIndexRequest;
