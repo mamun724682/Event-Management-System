@@ -94,6 +94,7 @@
     <!-- Custom styles for this template -->
     <link href="/assets/dashboard/dashboard.css" rel="stylesheet">
     <link href="/assets/sign-in.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">

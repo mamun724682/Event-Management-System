@@ -62,10 +62,16 @@
                                     <td x-text="(page-1)*perPage+(index+1)"></td>
                                     <td x-text="event.name"></td>
                                     <td x-text="event.location"></td>
-                                    <td x-text="event.capacity"></td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" x-bind:style="'width: ' + (event.total_attendees / event.capacity * 100) + '%'" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" x-text="event.total_attendees"></div>
+                                            <div x-show="(event.capacity - event.total_attendees) > 0" class="progress-bar" role="progressbar" x-bind:style="'width: ' + 100 - (event.total_attendees / event.capacity * 100) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" x-text="event.capacity - event.total_attendees"></div>
+                                        </div>
+                                    </td>
                                     <td x-text="event.date"></td>
                                     <td x-text="event.created_at"></td>
                                     <td>
+                                        <a x-bind:href="'/events/'+event.slug+'/register'" target="_blank">View</a>
                                         <a x-bind:href="'/events/'+event.id+'/edit'">Edit</a>
                                         <a x-bind:href="'/events/'+event.id+'/delete'" onclick="return confirm('Are you sure to delete?')">Delete</a>
                                     </td>
@@ -94,7 +100,7 @@
                             page: 1,
                             perPage: 10,
                             total: 0,
-                            sortBy: 'date',
+                            sortBy: 'id',
                             sortOrder: 'ASC',
                             name: '',
 
@@ -132,6 +138,5 @@
         </div>
     </div>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <?php $content = ob_get_clean(); ?>
 <?php include __DIR__ . '/../../layouts/app.php'; ?>

@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Models\Event;
-use App\Models\User;
 use App\Requests\Request;
 use App\Response;
 use App\View;
@@ -95,5 +94,13 @@ class EventController
         }
         Response::setFlashMessage('Event deleted successfully.');
         header('Location: /events');
+    }
+
+    public function showRegister(string $slug)
+    {
+        $event = $this->model->where('slug', $slug)->firstOrFail();
+        View::renderAndEcho('guest.event', [
+            'event' => $event,
+        ]);
     }
 }

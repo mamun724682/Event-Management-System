@@ -13,6 +13,9 @@ Router::post('/login', [AuthController::class, 'login', 'guest']);
 Router::get('/register', [AuthController::class, 'showRegister', 'guest']);
 Router::post('/register', [AuthController::class, 'register', 'guest']);
 
+// Event register
+Router::get('/events/{slug}/register', [EventController::class, 'showRegister']);
+
 /**
  * Auth routes
  */

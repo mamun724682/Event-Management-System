@@ -171,6 +171,29 @@ abstract class Model extends Database
         }
     }
 
+    public function firstOrFail()
+    {
+        try {
+            $query = "SELECT * FROM {$this->table}" . $this->buildWhere();
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($this->bindings);
+
+            $this->resetQuery();
+
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$data) {
+                View::renderAndEcho('errors.error', [
+                    'code'    => 404,
+                    'message' => "Corresponding data not found!",
+                    'trace'   => null
+                ]);
+            }
+            return $data;
+        } catch (\Exception $e) {
+            throw new \Exception("Error fetching first data: " . $e->getMessage());
+        }
+    }
+
     public function create($data)
     {
         try {
