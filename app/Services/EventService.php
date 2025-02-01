@@ -28,12 +28,10 @@ class EventService
         $page = $queryParameters['page'] ?? 1;
         $perPage = $queryParameters['perPage'] ?? 10;
 
-        print_r(EventFiltersEnum::cases());
-        die();
         return $this->eventRepository->getAll(
             page: $page,
             perPage: $perPage,
-            filters: Helper::getFiltersValues($queryParameters, EventFiltersEnum::cases()),
+            filters: Helper::getFiltersValues($queryParameters, EventFiltersEnum::values()),
             sortBy: $queryParameters["sortBy"] ?? EventFieldsEnum::ID->value,
             sortOrder: $queryParameters["sortOrder"] ?? SortOrderEnum::DESC->value
         );

@@ -25,13 +25,13 @@
                     <!-- Filter Section -->
                     <div class="row g-2 align-items-center mb-3">
                         <div class="col-md-6">
-                            <input type="text" x-model="search" @input.debounce.500ms="fetchEvents" class="form-control" id="search" placeholder="Search...">
+                            <input type="text" x-model="name" @input.debounce.500ms="fetchEvents" class="form-control" id="name" placeholder="Search by name">
                         </div>
                         <div class="col-md-3">
                             <select class="form-select" id="sortBy" x-model="sortBy" @change="fetchEvents">
+                                <option value="id">Sort by ID</option>
                                 <option value="name">Sort by Name</option>
                                 <option value="date">Sort by Date</option>
-                                <option value="location">Sort by Location</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -96,14 +96,14 @@
                             total: 0,
                             sortBy: 'date',
                             sortOrder: 'ASC',
-                            search: '',
+                            name: '',
 
                             get totalPages() {
                                 return Math.ceil(this.total / this.perPage);
                             },
 
                             async fetchEvents() {
-                                const url = `/api/events?page=${this.page}&perPage=${this.perPage}&sortBy=${this.sortBy}&sortOrder=${this.sortOrder}&search=${this.search}`;
+                                const url = `/api/events?page=${this.page}&perPage=${this.perPage}&sortBy=${this.sortBy}&sortOrder=${this.sortOrder}&name=${this.name}`;
                                 const response = await fetch(url);
                                 const data = await response.json();
 

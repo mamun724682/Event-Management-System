@@ -13,9 +13,11 @@ class EventIndexRequest extends Request
     public function rules(): array
     {
         return [
-            'page'    => 'nullable|numeric|min:1',
-            'perPage' => 'nullable|numeric|min:1',
-            'search'  => 'nullable|string',
+            'name'      => 'nullable|string',
+            'sortBy'    => 'nullable|string',
+            'sortOrder' => 'nullable|string',
+            'page'      => 'nullable|numeric|min:1',
+            'perPage'   => 'nullable|numeric|min:1',
         ];
     }
 }

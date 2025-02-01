@@ -11,7 +11,7 @@ class Helper
         foreach ($fields as $field) {
             if ($allowNull && array_key_exists($field, $haystack) && is_null($haystack[$field])) {
                 $result[$field] = $haystack[$field];
-            } elseif (isset($haystack[$field])) {
+            } elseif (isset($haystack[$field]) and $haystack[$field]) {
                 $result[$field] = $haystack[$field];
             }
         }

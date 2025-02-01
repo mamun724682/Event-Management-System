@@ -23,8 +23,6 @@ class EventController
         $queryParameters = $request->validated();
         $queryParameters[EventFiltersEnum::USER_ID->value] = Auth::id();
 
-        print_r($this->service->getAll($queryParameters));
-        die();
         Response::success(
             data: $this->service->getAll($queryParameters),
             message: 'Events retrieved successfully.'
