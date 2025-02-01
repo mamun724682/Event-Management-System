@@ -18,6 +18,7 @@ class BCreateEventsTable extends Database
                 date DATE NOT NULL,
                 location VARCHAR(255),
                 capacity INT NOT NULL,
+                total_attendees INT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

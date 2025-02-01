@@ -2,6 +2,7 @@
 
 namespace Database;
 
+use Database\seeders\AttendeeSeeder;
 use Database\seeders\EventSeeder;
 use Database\seeders\UserSeeder;
 
@@ -23,6 +24,7 @@ class DatabaseManager
     {
         (new UserSeeder())->run();
         (new EventSeeder())->run();
+        (new AttendeeSeeder())->run();
     }
 
     private static function getClass($files, $method)
