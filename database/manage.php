@@ -19,4 +19,5 @@ if ($command == 'migrate') {
     echo "Invalid command. Use 'migrate', 'seed', or 'migrate:fresh'.\n";
 }
 
-return 0;
+echo 'Database command done.' . PHP_EOL;
+return true;
