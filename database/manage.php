@@ -5,25 +5,16 @@ use Database\DatabaseManager;
 
 $command = $argv[1] ?? null;
 
-switch ($command) {
-    case 'migrate':
-        DatabaseManager::migrate();
-        break;
-
-    case 'rollback':
-        DatabaseManager::deleteAll();
-        break;
-
-    case 'seed':
-        DatabaseManager::seed();
-        break;
-
-    case 'migrate:fresh':
-        DatabaseManager::deleteAll();
-        DatabaseManager::migrate();
-        DatabaseManager::seed();
-        break;
-
-    default:
-        echo "Invalid command. Use 'migrate', 'seed', or 'migrate:fresh'.\n";
+if ($command == 'migrate') {
+    DatabaseManager::migrate();
+} elseif ($command == 'rollback') {
+    DatabaseManager::deleteAll();
+} elseif ($command == 'seed') {
+    DatabaseManager::seed();
+} elseif ($command == 'migrate:fresh') {
+    DatabaseManager::deleteAll();
+    DatabaseManager::migrate();
+    DatabaseManager::seed();
+} else {
+    echo "Invalid command. Use 'migrate', 'seed', or 'migrate:fresh'.\n";
 }
