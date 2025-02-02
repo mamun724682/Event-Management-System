@@ -6,10 +6,13 @@ use Database\Database;
 
 class BCreateEventsTable extends Database
 {
+    private string $tableName = 'events';
+
     public function up()
     {
-        $query = "
-            CREATE TABLE events (
+        if (!$this->hasTable($this->tableName)){
+            $query = "
+            CREATE TABLE {$this->tableName} (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 name VARCHAR(255) NOT NULL,
@@ -24,15 +27,16 @@ class BCreateEventsTable extends Database
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
         ";
-        $this->db->exec($query);
-        echo "Table `events` created successfully.\n";
+            $this->db->exec($query);
+            echo "Table `{$this->tableName}` created successfully.\n";
+        }
     }
 
     public function down()
     {
         $this->db->exec("SET foreign_key_checks = 0;");
-        $this->db->exec("DROP TABLE IF EXISTS events;");
+        $this->db->exec("DROP TABLE IF EXISTS {$this->tableName};");
         $this->db->exec("SET foreign_key_checks = 1;");
-        echo "Table `events` dropped successfully.\n";
+        echo "Table `{$this->tableName}` dropped successfully.\n";
     }
 }

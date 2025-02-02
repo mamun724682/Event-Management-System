@@ -24,4 +24,14 @@ class Database
             throw new \Exception('Database connection failed: ' . $e->getMessage());
         }
     }
+
+    public function hasTable(string $tableName): bool
+    {
+        $query = "SHOW TABLES LIKE :table";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':table', $tableName, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
 }
