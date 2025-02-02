@@ -25,7 +25,7 @@ Many PHP projects lack structure, making them difficult to maintain. This projec
 
 ## 🌐 Live Demo
 
-🔗 [Event Management System](https://event-management.devfaculty.com)
+🔗 [https://event-management.devfaculty.com](https://event-management.devfaculty.com)
 
 📩 **Login Credentials:**\
 ✉️ Email: `admin@app.com`\
