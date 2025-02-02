@@ -130,6 +130,7 @@ class EventService
      */
     public function export(array $event, array $attendees)
     {
+        // Note: This should be processed in the job queue for large data
         $csvHeader = ["Event Name", "Attendee Name", "Email", "Phone", "Registered At"];
         $csvData = [];
         foreach ($attendees['data'] as $attendee) {
