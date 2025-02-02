@@ -63,10 +63,8 @@
                                     <td x-text="event.name"></td>
                                     <td x-text="event.location"></td>
                                     <td>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" x-bind:style="'width: ' + (event.total_attendees / event.capacity * 100) + '%'" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" x-text="event.total_attendees"></div>
-                                            <div x-show="(event.capacity - event.total_attendees) > 0" class="progress-bar" role="progressbar" x-bind:style="'width: ' + 100 - (event.total_attendees / event.capacity * 100) + '%'" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" x-text="event.capacity - event.total_attendees"></div>
-                                        </div>
+                                        Capacity: <span x-text="event.capacity"></span><br>
+                                        Attendees: <span x-text="event.total_attendees"></span>
                                     </td>
                                     <td x-text="event.date"></td>
                                     <td x-text="event.created_at"></td>
