@@ -1,0 +1,21 @@
+name: 🚀 Deploy website on push to main
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.TARGET_FOLDER_PATH }}
+            git stash
+            git pull
+            composer install --optimize-autoloader --no-dev
+            php database/manage.php migrate
